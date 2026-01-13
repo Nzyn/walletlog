@@ -79,13 +79,18 @@ const HomePage = () => {
   };
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ paddingLeft: { xs: 1, sm: 2 }, paddingRight: { xs: 1, sm: 2 } }}>
+    <Container maxWidth={false} disableGutters sx={{ 
+      paddingLeft: { xs: 0, sm: 2 }, 
+      paddingRight: { xs: 0, sm: 2 },
+      width: '100%',
+      boxSizing: 'border-box'
+    }}>
       {/* User greeting section */}
-      <Box mb={3} pt={2}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold' }}>
+      <Box mb={3} pt={2} sx={{ width: '100%' }}>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2rem' } }}>
           Hello, User
         </Typography>
-        <Typography variant="h6" component="h2" gutterBottom sx={{ color: '#7E6BC7', fontWeight: 'normal' }}>
+        <Typography variant="h6" component="h2" gutterBottom sx={{ color: '#7E6BC7', fontWeight: 'normal', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
           Good Day!
         </Typography>
       </Box>
@@ -94,23 +99,44 @@ const HomePage = () => {
       <Paper 
         elevation={2} 
         sx={{ 
-          p: { xs: 2, sm: 3 }, 
+          p: { xs: 1, sm: 2 }, 
           backgroundColor: '#F5F3FF', 
           borderRadius: 2,
           mb: 3,
           background: 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)',
+          width: '100%',
+          boxSizing: 'border-box'
         }}
       >
-        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2} flexDirection={{ xs: 'column', sm: 'row' }}>
-          <Typography variant="h6" sx={{ color: '#4B0082', fontWeight: 'bold' }}>
-            {selectedPeriod === 'week' ? 'This Week' : selectedPeriod === 'month' ? 'This Month' : 'This Year'}
-          </Typography>
-          <Typography variant="body1" sx={{ color: '#7E6BC7', mt: { xs: 1, sm: 0 } }}>
+        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2} flexDirection={{ xs: 'column', sm: 'row' }} gap={{ xs: 1, sm: 0 }}>
+          <Box display="flex" alignItems="center" gap={2} flexDirection={{ xs: 'column', sm: 'row' }} width="100%">
+            <Typography variant="h6" sx={{ color: '#4B0082', fontWeight: 'bold', textAlign: { xs: 'center', sm: 'left' } }}>
+              {selectedPeriod === 'week' ? 'This Week' : selectedPeriod === 'month' ? 'This Month' : 'This Year'}
+            </Typography>
+            <FormControl size="small" sx={{ 
+              minWidth: { xs: '100%', sm: 150 }, 
+              backgroundColor: 'white', 
+              borderRadius: 1, 
+              mt: { xs: 1, sm: 0 },
+              width: { xs: '100%', sm: 'auto' }
+            }}>
+              <Select
+                value={selectedPeriod}
+                onChange={(e) => setSelectedPeriod(e.target.value)}
+                sx={{ fontWeight: 'bold' }}
+              >
+                <MenuItem value="week">This Week</MenuItem>
+                <MenuItem value="half-month">This Half-Month</MenuItem>
+                <MenuItem value="month">This Month</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+          <Typography variant="body1" sx={{ color: '#7E6BC7', textAlign: { xs: 'center', sm: 'right' }, width: { xs: '100%', sm: 'auto' } }}>
             {getCurrentDateFormatted()}
           </Typography>
         </Box>
         
-        <Grid container spacing={2} sx={{ mt: 1 }}>
+        <Grid container spacing={1} sx={{ mt: 0.5 }}>
           <Grid item xs={12} sm={4}>
             <Card 
               sx={{ 
@@ -123,23 +149,28 @@ const HomePage = () => {
                   boxShadow: 6,
                 },
                 transition: 'transform 0.2s, box-shadow 0.2s',
-                height: '100%'
+                height: '100%',
+                minHeight: { xs: 100, sm: 120 },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                py: 1
               }}
               onClick={() => goToTransactionHistory('income')}
             >
-              <CardContent>
-                <Box display="flex" alignItems="center" justifyContent="space-between">
-                  <Typography variant="h6" color="textSecondary" gutterBottom>
+              <CardContent sx={{ textAlign: 'center', width: '100%', py: 1, px: 1 }}>
+                <Box display="flex" alignItems="center" justifyContent="center" mb={0.5}>
+                  <Typography variant="h6" color="textSecondary" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                     Income
                   </Typography>
                   <Link href="#" underline="none" onClick={(e) => {
                     e.preventDefault();
                     goToTransactionHistory('income');
-                  }}>
-                    <ArrowUpward sx={{ color: '#4CAF50', fontSize: 30 }} />
+                  }} sx={{ ml: 0.5 }}>
+                    <ArrowUpward sx={{ color: '#4CAF50', fontSize: 18 }} />
                   </Link>
                 </Box>
-                <Typography variant="h4" component="h2" sx={{ color: '#4B0082', fontWeight: 'bold' }}>
+                <Typography variant="h5" component="h2" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                   {formatCurrency(totals.totalIncome)}
                 </Typography>
               </CardContent>
@@ -157,23 +188,28 @@ const HomePage = () => {
                   boxShadow: 6,
                 },
                 transition: 'transform 0.2s, box-shadow 0.2s',
-                height: '100%'
+                height: '100%',
+                minHeight: { xs: 100, sm: 120 },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                py: 1
               }}
               onClick={() => goToTransactionHistory('expense')}
             >
-              <CardContent>
-                <Box display="flex" alignItems="center" justifyContent="space-between">
-                  <Typography variant="h6" color="textSecondary" gutterBottom>
+              <CardContent sx={{ textAlign: 'center', width: '100%', py: 1, px: 1 }}>
+                <Box display="flex" alignItems="center" justifyContent="center" mb={0.5}>
+                  <Typography variant="h6" color="textSecondary" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                     Expenses
                   </Typography>
                   <Link href="#" underline="none" onClick={(e) => {
                     e.preventDefault();
                     goToTransactionHistory('expense');
-                  }}>
-                    <ArrowDownward sx={{ color: '#F44336', fontSize: 30 }} />
+                  }} sx={{ ml: 0.5 }}>
+                    <ArrowDownward sx={{ color: '#F44336', fontSize: 18 }} />
                   </Link>
                 </Box>
-                <Typography variant="h4" component="h2" sx={{ color: '#4B0082', fontWeight: 'bold' }}>
+                <Typography variant="h5" component="h2" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                   {formatCurrency(totals.totalExpenses)}
                 </Typography>
               </CardContent>
@@ -193,29 +229,35 @@ const HomePage = () => {
                   boxShadow: 6,
                 },
                 transition: 'transform 0.2s, box-shadow 0.2s',
-                height: '100%'
+                height: '100%',
+                minHeight: { xs: 100, sm: 120 },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                py: 1
               }}
             >
-              <CardContent>
-                <Box display="flex" alignItems="center" justifyContent="space-between">
-                  <Typography variant="h6" color="textSecondary" gutterBottom>
+              <CardContent sx={{ textAlign: 'center', width: '100%', py: 1, px: 1 }}>
+                <Box display="flex" alignItems="center" justifyContent="center" mb={0.5}>
+                  <Typography variant="h6" color="textSecondary" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                     Remaining
                   </Typography>
                   <Link href="#" underline="none" onClick={(e) => {
                     e.preventDefault();
                     // Show all transactions when clicking on remaining balance
                     goToTransactionHistory('all');
-                  }}>
+                  }} sx={{ ml: 0.5 }}>
                     {totals.remainingBalance >= 0 ? 
-                      <ArrowUpward sx={{ color: '#4B0082', fontSize: 30 }} /> : 
-                      <ArrowDownward sx={{ color: '#D32F2F', fontSize: 30 }} />
+                      <ArrowUpward sx={{ color: '#4B0082', fontSize: 18 }} /> : 
+                      <ArrowDownward sx={{ color: '#D32F2F', fontSize: 18 }} />
                     }
                   </Link>
                 </Box>
-                <Typography variant="h4" component="h2" sx={{ 
+                <Typography variant="h5" component="h2" sx={{ 
                   color: '#4B0082', 
                   fontWeight: 'bold',
-                  color: totals.remainingBalance >= 0 ? '#4B0082' : '#D32F2F'
+                  color: totals.remainingBalance >= 0 ? '#4B0082' : '#D32F2F',
+                  fontSize: { xs: '1rem', sm: '1.25rem' }
                 }}>
                   {formatCurrency(totals.remainingBalance)}
                 </Typography>
@@ -227,7 +269,7 @@ const HomePage = () => {
 
       {/* Categories Section */}
       <Accordion 
-        sx={{ mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2 }}
+        sx={{ mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}
         expanded={categoriesExpanded}
         onChange={() => setCategoriesExpanded(!categoriesExpanded)}
       >
@@ -244,22 +286,26 @@ const HomePage = () => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Grid container spacing={1} sx={{ py: 1 }}>
+          <Grid container spacing={1} sx={{ py: 1, width: '100%', boxSizing: 'border-box' }}>
             {categories.map((category) => (
               <Grid item xs={6} sm={4} md={2} key={category.id}>
                 <Card sx={{ 
                   backgroundColor: '#FFFFFF', 
                   textAlign: 'center', 
-                  padding: 1.5,
+                  padding: 1,
                   borderRadius: 2,
                   border: '1px solid #B19CD9',
-                  '&:hover': { backgroundColor: '#F8F5FF' }
+                  '&:hover': { backgroundColor: '#F8F5FF' },
+                  minHeight: 70,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center'
                 }}>
-                  <div style={{ fontSize: '20px', marginBottom: '4px' }}>💰</div>
-                  <Typography variant="body2" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                  <div style={{ fontSize: '16px', marginBottom: '2px' }}>💰</div>
+                  <Typography variant="body2" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: '0.7rem' }}>
                     {category.name}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#7E6BC7' }}>
+                  <Typography variant="caption" sx={{ color: '#7E6BC7', fontSize: '0.6rem' }}>
                     ${category.expenseTotal ? category.expenseTotal.toFixed(2) : '0.00'}
                   </Typography>
                 </Card>
@@ -271,7 +317,7 @@ const HomePage = () => {
 
       {/* Transactions Section */}
       <Accordion 
-        sx={{ mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2 }}
+        sx={{ mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}
         expanded={transactionsExpanded}
         onChange={() => setTransactionsExpanded(!transactionsExpanded)}
       >
@@ -288,9 +334,9 @@ const HomePage = () => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Paper elevation={2} sx={{ p: 2, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%' }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexDirection={{ xs: 'column', sm: 'row' }} gap={1}>
-              <Typography variant="h6" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold' }}>
+          <Paper elevation={2} sx={{ p: 1, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} flexDirection={{ xs: 'column', sm: 'row' }} gap={1}>
+              <Typography variant="h6" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                 Recent Transactions
               </Typography>
               <Button
@@ -302,74 +348,96 @@ const HomePage = () => {
                   color: '#FFFFFF',
                   '&:hover': { backgroundColor: '#9A7EB8' },
                   fontWeight: 'bold',
-                  alignSelf: 'flex-start',
-                  width: { xs: '100%', sm: 'auto' }
+                  alignSelf: { xs: 'stretch', sm: 'auto' },
+                  width: { xs: '100%', sm: 'auto' },
+                  py: 1
                 }}
               >
                 Add Transaction
               </Button>
             </Box>
             
-            <TableContainer>
-              <Table>
+            <TableContainer sx={{ width: '100%', boxSizing: 'border-box' }}>
+              <Table sx={{ minWidth: 280 }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: '#EDE9FE' }}>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold' }}>Name</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold' }}>Date</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold' }}>Category</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold' }}>Amount</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold' }}>Type</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold' }}>Actions</TableCell>
+                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Name</TableCell>
+                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Date</TableCell>
+                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Category</TableCell>
+                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Amount</TableCell>
+                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Type</TableCell>
+                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {filteredTransactions.slice(0, 5).map((transaction) => (
                     <TableRow key={transaction.id}>
-                      <TableCell>{transaction.name}</TableCell>
-                      <TableCell>{transaction.date}</TableCell>
-                      <TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>{transaction.name}</TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>{transaction.date}</TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
                         <Chip 
                           label={transaction.category} 
                           sx={{ 
                             backgroundColor: '#EDE9FE', 
                             color: '#4B0082',
                             fontWeight: 'bold',
-                            fontSize: '0.75rem'
+                            fontSize: '0.6rem',
+                            height: '20px',
+                            '& .MuiChip-label': {
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              pl: 0.5,
+                              pr: 0.5
+                            }
                           }} 
                         />
                       </TableCell>
                       <TableCell sx={{ 
                         color: transaction.type === 'income' ? '#4CAF50' : '#F44336',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                        px: { xs: 0.5, sm: 1 },
+                        py: { xs: 0.5, sm: 1 }
                       }}>
                         {transaction.type === 'income' ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
                         <Chip 
                           label={transaction.type} 
                           sx={{ 
                             backgroundColor: transaction.type === 'income' ? '#E8F5E9' : '#FFEBEE',
                             color: transaction.type === 'income' ? '#2E7D32' : '#C62828',
                             fontWeight: 'bold',
-                            fontSize: '0.75rem'
+                            fontSize: '0.6rem',
+                            height: '20px',
+                            '& .MuiChip-label': {
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              pl: 0.5,
+                              pr: 0.5
+                            }
                           }} 
                         />
                       </TableCell>
-                      <TableCell>
-                        <IconButton 
-                          size="small" 
-                          sx={{ color: '#7E6BC7' }}
-                          onClick={() => handleEditClick(transaction)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton 
-                          size="small" 
-                          sx={{ color: '#D32F2F' }}
-                          onClick={() => deleteTransaction(transaction.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
+                        <Box display="flex" justifyContent="space-around">
+                          <IconButton 
+                            size="small" 
+                            sx={{ color: '#7E6BC7', padding: '4px', minWidth: '32px' }}
+                            onClick={() => handleEditClick(transaction)}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton 
+                            size="small" 
+                            sx={{ color: '#D32F2F', padding: '4px', minWidth: '32px' }}
+                            onClick={() => deleteTransaction(transaction.id)}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -382,7 +450,7 @@ const HomePage = () => {
 
       {/* Notes Section */}
       <Accordion 
-        sx={{ mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2 }}
+        sx={{ mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}
         expanded={notesExpanded}
         onChange={() => setNotesExpanded(!notesExpanded)}
       >
@@ -399,7 +467,7 @@ const HomePage = () => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Paper elevation={2} sx={{ p: 2, backgroundColor: '#FFFFFF', borderRadius: 2, width: '100%' }}>
+          <Paper elevation={2} sx={{ p: 1, backgroundColor: '#FFFFFF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}>
             <TextField
               multiline
               rows={4}
@@ -409,17 +477,20 @@ const HomePage = () => {
               sx={{ 
                 '& .MuiOutlinedInput-root': {
                   backgroundColor: '#F8F5FF',
+                  py: 0.5,
+                  px: 0.5
                 }
               }}
             />
-            <Box display="flex" justifyContent="flex-end" mt={2}>
+            <Box display="flex" justifyContent="flex-end" mt={1}>
               <Button
                 variant="contained"
                 sx={{ 
                   backgroundColor: '#B19CD9', 
                   color: '#FFFFFF',
                   '&:hover': { backgroundColor: '#9A7EB8' },
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
+                  py: 0.5
                 }}
               >
                 Save Note

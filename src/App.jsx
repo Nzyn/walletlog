@@ -23,6 +23,19 @@ function AppContent() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Function to get page title based on current route
+  const getPageTitle = () => {
+    switch(location.pathname) {
+      case '/':
+      case '/home':
+        return 'Dashboard';
+      case '/transactions':
+        return 'Transaction History';
+      default:
+        return 'WalletLog';
+    }
+  };
+
   return (
     <SidebarContext.Provider value={{ isSidebarOpen, toggleSidebar }}>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -51,8 +64,22 @@ function AppContent() {
           >
             ☰
           </button>
+          
           <div style={{ 
-            marginLeft: 'auto', 
+            flexGrow: 1,
+            textAlign: 'center'
+          }}>
+            <h1 style={{ 
+              margin: 0, 
+              color: '#FFFFFF', 
+              fontWeight: 'bold',
+              fontSize: '1.4rem' // Slightly larger than "Hello, User" but not too big
+            }}>
+              {getPageTitle()}
+            </h1>
+          </div>
+          
+          <div style={{ 
             display: 'flex', 
             alignItems: 'center',
             color: 'white',
