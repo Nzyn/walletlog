@@ -1,24 +1,20 @@
 import React from 'react';
-import { Drawer, List, ListItem, ListItemText, ListItemButton, TextField, Button, Box, IconButton, Typography, Divider, useMediaQuery } from '@mui/material';
+import { Drawer, List, ListItem, ListItemText, ListItemButton, Button, Box, IconButton, Typography, Divider, useMediaQuery } from '@mui/material';
 import { Add as AddIcon, Close as CloseIcon, Menu as MenuIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon, Home as HomeIcon, Receipt as ReceiptIcon, Notes as NotesIcon } from '@mui/icons-material';
 import { useBudget } from '../contexts/BudgetContext';
+import AddCategoryPopup from './AddCategoryPopup';
 
 const drawerWidth = 280;
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { categories, addCategory } = useBudget();
-  const [isAddingCategory, setIsAddingCategory] = React.useState(false);
-  const [newCategoryName, setNewCategoryName] = React.useState('');
+  const [showAddCategoryPopup, setShowAddCategoryPopup] = React.useState(false);
   
   // Check if screen is small (mobile)
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  const handleAddCategory = () => {
-    if (newCategoryName.trim()) {
-      addCategory(newCategoryName.trim());
-      setNewCategoryName('');
-      setIsAddingCategory(false);
-    }
+  const handleAddCategory = (categoryData) => {
+    addCategory(categoryData);
   };
 
   return (
@@ -129,80 +125,50 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             {categories.map((category) => (
               <ListItem key={category.id} disablePadding>
                 <ListItemButton sx={{ borderRadius: 2, marginY: 0.5, backgroundColor: '#FFFFFF', '&:hover': { backgroundColor: '#EDE9FE' } }}>
-                  <ListItemText 
-                    primary={category.name} 
-                    primaryTypographyProps={{ 
-                      sx: { color: '#4B0082', fontWeight: 500 } 
-                    }} 
-                  />
+                  <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                    <span style={{ fontSize: '1.2rem', marginRight: '8px' }}>{category.icon || '💰'}</span>
+                    <ListItemText 
+                      primary={category.name} 
+                      secondary={category.description}
+                      primaryTypographyProps={{ 
+                        sx: { color: '#4B0082', fontWeight: 500 } 
+                      }}
+                      secondaryTypographyProps={{
+                        sx: { color: '#7E6BC7', fontSize: '0.75rem' }
+                      }}
+                    />
+                  </Box>
                 </ListItemButton>
               </ListItem>
             ))}
             
-            {isAddingCategory ? (
-              <ListItem disablePadding>
-                <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', paddingY: 1 }}>
-                  <TextField
-                    autoFocus
-                    size="small"
-                    placeholder="Category name"
-                    value={newCategoryName}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
-                    sx={{ 
-                      marginRight: 1,
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#FFFFFF',
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleAddCategory();
-                      } else if (e.key === 'Escape') {
-                        setIsAddingCategory(false);
-                        setNewCategoryName('');
-                      }
-                    }}
-                  />
-                  <IconButton 
-                    size="small" 
-                    onClick={handleAddCategory}
-                    sx={{ color: '#4B0082' }}
-                  >
-                    <AddIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton 
-                    size="small" 
-                    onClick={() => {
-                      setIsAddingCategory(false);
-                      setNewCategoryName('');
-                    }}
-                    sx={{ color: '#4B0082' }}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-              </ListItem>
-            ) : (
-              <ListItem disablePadding>
-                <Button
-                  startIcon={<AddIcon />}
-                  onClick={() => setIsAddingCategory(true)}
-                  sx={{
-                    justifyContent: 'flex-start',
-                    color: '#4B0082',
-                    fontWeight: 500,
-                    '&:hover': {
-                      backgroundColor: '#EDE9FE',
-                    }
-                  }}
-                >
-                  Add Category
-                </Button>
-              </ListItem>
-            )}
+            <ListItem disablePadding>
+              <Button
+                startIcon={<AddIcon />}
+                onClick={() => setShowAddCategoryPopup(true)}
+                sx={{
+                  justifyContent: 'flex-start',
+                  color: '#4B0082',
+                  fontWeight: 500,
+                  width: '100%',
+                  '&:hover': {
+                    backgroundColor: '#EDE9FE',
+                  }
+                }}
+              >
+                Add Category
+              </Button>
+            </ListItem>
           </List>
         </Box>
       </Drawer>
+      
+      {/* Add Category Popup */}
+      <AddCategoryPopup 
+        open={showAddCategoryPopup}
+        onClose={() => setShowAddCategoryPopup(false)}
+        onSave={handleAddCategory}
+      />
     </>
   );
 };

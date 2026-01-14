@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import Sidebar from './components/Sidebar';
 import { BudgetProvider } from './contexts/BudgetContext';
 import TransactionHistoryPage from './pages/TransactionHistoryPage';
+import WelcomePopup from './components/WelcomePopup';
 import React from 'react';
 
 // Create a state context to share the sidebar collapse state
@@ -12,8 +13,44 @@ const SidebarContext = React.createContext();
 
 function AppContent() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false); // Changed to isSidebarOpen for mobile
+  const [showWelcomePopup, setShowWelcomePopup] = React.useState(false);
   const location = useLocation(); // To detect route changes and close sidebar on mobile
   
+  // Check if it's the first time visiting the app or if user hasn't entered income yet
+  React.useEffect(() => {
+    try {
+      // Check if user has already entered their income before
+      const userIncome = localStorage.getItem('userIncome');
+      const hasVisited = localStorage.getItem('hasVisited');
+      
+      // Show popup if user hasn't entered income and hasn't visited before
+      if (!userIncome && !hasVisited) {
+        // Small delay to ensure UI is rendered first
+        setTimeout(() => {
+          setShowWelcomePopup(true);
+        }, 500);
+      }
+      
+      // Mark as visited (but not necessarily as having entered income)
+      if (!hasVisited) {
+        localStorage.setItem('hasVisited', 'true');
+      }
+    } catch (e) {
+      console.error('Error accessing localStorage:', e);
+      // Fallback: try to show popup if there are no storage issues
+      try {
+        const userIncome = localStorage.getItem('userIncome');
+        if (!userIncome) {
+          setTimeout(() => {
+            setShowWelcomePopup(true);
+          }, 500);
+        }
+      } catch (err) {
+        console.error('Severe localStorage error:', err);
+      }
+    }
+  }, []);
+
   // Close sidebar when route changes on mobile
   React.useEffect(() => {
     setIsSidebarOpen(false);
@@ -34,6 +71,21 @@ function AppContent() {
       default:
         return 'WalletLog';
     }
+  };
+
+  const handleSaveIncome = (data) => {
+    try {
+      // Store the income in localStorage or context for later use
+      localStorage.setItem('userIncome', JSON.stringify(data));
+      // Optionally, dispatch to context to update global state
+      console.log('Income saved:', data);
+    } catch (e) {
+      console.error('Error saving income to localStorage:', e);
+    }
+  };
+
+  const handleClosePopup = () => {
+    setShowWelcomePopup(false);
   };
 
   return (
@@ -116,6 +168,12 @@ function AppContent() {
             </Routes>
           </main>
         </div>
+        
+        <WelcomePopup 
+          open={showWelcomePopup}
+          onClose={handleClosePopup}
+          onSave={handleSaveIncome}
+        />
       </div>
     </SidebarContext.Provider>
   );
