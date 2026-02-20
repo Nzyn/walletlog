@@ -11,7 +11,8 @@ import {
   FormControl,
   InputLabel,
   Box,
-  IconButton
+  IconButton,
+  Typography
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 
@@ -43,22 +44,25 @@ const WelcomePopup = ({ open, onClose, onSave }) => {
   };
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose} 
-      maxWidth="sm" 
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
       fullWidth
       PaperProps={{
-        style: {
-          borderRadius: 16,
-          background: 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)',
+        sx: {
+          borderRadius: 3,
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)'
         }
       }}
     >
-      <DialogTitle 
-        sx={{ 
-          color: '#4B0082', 
-          fontWeight: 'bold',
+      <DialogTitle
+        sx={{
+          fontSize: '1.5rem',
+          fontWeight: 700,
+          color: '#1E293B',
+          backgroundColor: '#F8FAFC',
+          borderBottom: '1px solid #E2E8F0',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
@@ -68,14 +72,21 @@ const WelcomePopup = ({ open, onClose, onSave }) => {
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={{ color: '#4B0082' }}
+          sx={{
+            color: '#64748B',
+            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.08)' }
+          }}
         >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      
-      <DialogContent dividers>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+
+      <DialogContent sx={{ pt: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+          <Typography sx={{ color: '#64748B', fontSize: '0.95rem', lineHeight: 1.6 }}>
+            Let's get started! Enter your income to set up your budget tracking.
+          </Typography>
+
           <TextField
             autoFocus
             margin="dense"
@@ -88,27 +99,40 @@ const WelcomePopup = ({ open, onClose, onSave }) => {
             onKeyPress={handleKeyPress}
             error={!!errors.income}
             helperText={errors.income}
-            InputProps={{
-              sx: { 
-                backgroundColor: '#FFFFFF',
-                borderRadius: 1
+            inputProps={{ step: '0.01', min: '0' }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 1.5,
+                backgroundColor: '#F8FAFC',
+                '&:hover fieldset': {
+                  borderColor: '#2563EB'
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#2563EB'
+                }
               }
             }}
-            InputLabelProps={{
-              sx: { color: '#7E6BC7' }
-            }}
           />
-          
-          <FormControl fullWidth variant="outlined" sx={{ mt: 1 }}>
-            <InputLabel id="period-select-label" sx={{ color: '#7E6BC7' }}>Select Period</InputLabel>
+
+          <FormControl fullWidth variant="outlined">
+            <InputLabel id="period-select-label" sx={{ backgroundColor: '#FFFFFF', px: 0.5 }}>Select Period</InputLabel>
             <Select
               labelId="period-select-label"
               value={period}
               onChange={(e) => setPeriod(e.target.value)}
               label="Select Period"
-              sx={{ 
-                backgroundColor: '#FFFFFF',
-                borderRadius: 1
+              sx={{
+                borderRadius: 1.5,
+                backgroundColor: '#F8FAFC',
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#E2E8F0'
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#2563EB'
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#2563EB'
+                }
               }}
             >
               <MenuItem value="week">This Week</MenuItem>
@@ -116,34 +140,48 @@ const WelcomePopup = ({ open, onClose, onSave }) => {
               <MenuItem value="month">This Month</MenuItem>
             </Select>
           </FormControl>
-          
-          <Box sx={{ mt: 1 }}>
-            <p style={{ color: '#4B0082', fontSize: '0.9rem' }}>
-              Enter your income to get started with tracking your finances. 
-              We'll use this to calculate your weekly, half-monthly, or monthly budget.
-            </p>
+
+          <Box
+            sx={{
+              backgroundColor: '#EFF6FF',
+              borderRadius: 2,
+              border: '1px solid #BFDBFE',
+              padding: 2,
+              mt: 1
+            }}
+          >
+            <Typography variant="body2" sx={{ color: '#1E40AF', fontSize: '0.9rem', lineHeight: 1.6 }}>
+              💡 We'll use this information to calculate your budget limits for the selected period. You can always update this later!
+            </Typography>
           </Box>
         </Box>
       </DialogContent>
-      
-      <DialogActions sx={{ p: 2, justifyContent: 'space-between' }}>
-        <Button 
-          onClick={onClose} 
-          sx={{ 
-            color: '#4B0082',
-            fontWeight: 'bold'
+
+      <DialogActions sx={{
+        backgroundColor: '#F8FAFC',
+        borderTop: '1px solid #E2E8F0',
+        padding: '16px 24px',
+        gap: 2
+      }}>
+        <Button
+          onClick={onClose}
+          sx={{
+            color: '#64748B',
+            '&:hover': {
+              backgroundColor: '#E2E8F0'
+            }
           }}
         >
           Skip for now
         </Button>
-        <Button 
-          onClick={handleSubmit} 
-          variant="contained" 
-          sx={{ 
-            backgroundColor: '#B19CD9', 
-            color: '#FFFFFF',
-            fontWeight: 'bold',
-            '&:hover': { backgroundColor: '#9A7EB8' }
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          sx={{
+            backgroundColor: '#2563EB',
+            '&:hover': {
+              backgroundColor: '#1E40AF'
+            }
           }}
         >
           Save & Continue

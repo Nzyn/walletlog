@@ -13,9 +13,7 @@ export const useBudget = () => {
 
 export const BudgetProvider = ({ children }) => {
   const [categories, setCategories] = useState([
-    { id: 1, name: 'Savings', amount: 0, expenseTotal: 0, incomeTotal: 0 },
-    { id: 2, name: 'School', amount: 0, expenseTotal: 0, incomeTotal: 0 },
-    { id: 3, name: 'Food', amount: 0, expenseTotal: 0, incomeTotal: 0 },
+    // Starting with empty categories - users can add their own
   ]);
 
   const [transactions, setTransactions] = useState([
@@ -25,21 +23,31 @@ export const BudgetProvider = ({ children }) => {
     { id: 4, name: 'Investment Return', amount: 200, date: '2024-01-04', category: 'Savings', type: 'income' },
   ]);
 
-  const addCategory = (name) => {
+  // State for category budgets
+  const [categoryBudgets, setCategoryBudgets] = useState({});
+
+  const addCategory = (categoryData) => {
     const newCategory = {
       id: Date.now(),
-      name: name,
+      name: categoryData.name,
       amount: 0,
       expenseTotal: 0,
-      incomeTotal: 0
+      incomeTotal: 0,
+      icon: categoryData.icon || '💰',
+      description: categoryData.description || ''
     };
     setCategories([...categories, newCategory]);
   };
 
   const deleteCategory = (id) => {
     setCategories(categories.filter(category => category.id !== id));
-    // Also remove transactions associated with this category
+    // Also remove transactions and budgets associated with this category
     setTransactions(transactions.filter(transaction => transaction.category !== categories.find(c => c.id === id)?.name));
+    setCategoryBudgets(prev => {
+      const newBudgets = { ...prev };
+      delete newBudgets[id];
+      return newBudgets;
+    });
   };
 
   const addTransaction = (transaction) => {
@@ -67,6 +75,19 @@ export const BudgetProvider = ({ children }) => {
     ));
   };
 
+  // Set budgets for a category
+  const setCategoryBudget = (categoryId, budgets) => {
+    setCategoryBudgets(prev => ({
+      ...prev,
+      [categoryId]: budgets
+    }));
+  };
+
+  // Get budgets for a category
+  const getCategoryBudgets = (categoryId) => {
+    return categoryBudgets[categoryId] || {};
+  };
+
   const calculateTotals = () => {
     const totalIncome = transactions
       .filter(t => t.type === 'income')
@@ -88,11 +109,15 @@ export const BudgetProvider = ({ children }) => {
         .filter(t => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
       
+      // Get category budgets
+      const budgets = getCategoryBudgets(category.id);
+      
       return {
         ...category,
         expenseTotal,
         incomeTotal,
-        netTotal: incomeTotal - expenseTotal
+        netTotal: incomeTotal - expenseTotal,
+        budgets // Include budgets in the category data
       };
     });
     
@@ -107,11 +132,14 @@ export const BudgetProvider = ({ children }) => {
   const value = {
     categories,
     transactions,
+    categoryBudgets,
     addCategory,
     deleteCategory,
     addTransaction,
     deleteTransaction,
     updateTransaction,
+    setCategoryBudget,
+    getCategoryBudgets,
     calculateTotals
   };
 

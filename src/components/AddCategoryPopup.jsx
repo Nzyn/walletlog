@@ -72,22 +72,25 @@ const AddCategoryPopup = ({ open, onClose, onSave }) => {
   };
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={handleClose} 
-      maxWidth="sm" 
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="sm"
       fullWidth
       PaperProps={{
-        style: {
-          borderRadius: 16,
-          background: 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)',
+        sx: {
+          borderRadius: 3,
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)'
         }
       }}
     >
-      <DialogTitle 
-        sx={{ 
-          color: '#4B0082', 
-          fontWeight: 'bold',
+      <DialogTitle
+        sx={{
+          fontSize: '1.5rem',
+          fontWeight: 700,
+          color: '#1E293B',
+          backgroundColor: '#F8FAFC',
+          borderBottom: '1px solid #E2E8F0',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
@@ -97,14 +100,17 @@ const AddCategoryPopup = ({ open, onClose, onSave }) => {
         <IconButton
           aria-label="close"
           onClick={handleClose}
-          sx={{ color: '#4B0082' }}
+          sx={{
+            color: '#64748B',
+            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.08)' }
+          }}
         >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      
-      <DialogContent dividers>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+
+      <DialogContent sx={{ pt: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           {/* Category Name */}
           <TextField
             autoFocus
@@ -117,17 +123,20 @@ const AddCategoryPopup = ({ open, onClose, onSave }) => {
             onKeyPress={handleKeyPress}
             error={!!errors.name}
             helperText={errors.name}
-            InputProps={{
-              sx: { 
-                backgroundColor: '#FFFFFF',
-                borderRadius: 1
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 1.5,
+                backgroundColor: '#F8FAFC',
+                '&:hover fieldset': {
+                  borderColor: '#2563EB'
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#2563EB'
+                }
               }
             }}
-            InputLabelProps={{
-              sx: { color: '#7E6BC7' }
-            }}
           />
-          
+
           {/* Description */}
           <TextField
             margin="dense"
@@ -139,28 +148,40 @@ const AddCategoryPopup = ({ open, onClose, onSave }) => {
             value={categoryData.description}
             onChange={(e) => setCategoryData(prev => ({ ...prev, description: e.target.value }))}
             onKeyPress={handleKeyPress}
-            InputProps={{
-              sx: { 
-                backgroundColor: '#FFFFFF',
-                borderRadius: 1
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 1.5,
+                backgroundColor: '#F8FAFC',
+                '&:hover fieldset': {
+                  borderColor: '#2563EB'
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#2563EB'
+                }
               }
             }}
-            InputLabelProps={{
-              sx: { color: '#7E6BC7' }
-            }}
           />
-          
+
           {/* Icon Selection */}
           <FormControl fullWidth variant="outlined">
-            <InputLabel id="icon-select-label" sx={{ color: '#7E6BC7' }}>Choose Icon</InputLabel>
+            <InputLabel id="icon-select-label" sx={{ backgroundColor: '#FFFFFF', px: 0.5 }}>Choose Icon</InputLabel>
             <Select
               labelId="icon-select-label"
               value={categoryData.icon}
               onChange={(e) => setCategoryData(prev => ({ ...prev, icon: e.target.value }))}
               label="Choose Icon"
-              sx={{ 
-                backgroundColor: '#FFFFFF',
-                borderRadius: 1
+              sx={{
+                borderRadius: 1.5,
+                backgroundColor: '#F8FAFC',
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#E2E8F0'
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#2563EB'
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#2563EB'
+                }
               }}
             >
               {iconOptions.map((icon, index) => (
@@ -173,51 +194,63 @@ const AddCategoryPopup = ({ open, onClose, onSave }) => {
               ))}
             </Select>
           </FormControl>
-          
+
           {/* Preview */}
-          <Box sx={{ 
-            backgroundColor: '#FFFFFF', 
-            borderRadius: 2, 
-            padding: 2, 
-            border: '1px solid #B19CD9',
-            textAlign: 'center'
-          }}>
-            <Typography variant="subtitle1" sx={{ color: '#4B0082', fontWeight: 'bold', mb: 1 }}>
+          <Box
+            sx={{
+              backgroundColor: '#F8FAFC',
+              borderRadius: 2,
+              padding: 2.5,
+              border: '1px solid #E2E8F0',
+              textAlign: 'center',
+              transition: 'all 0.2s'
+            }}
+          >
+            <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700, fontSize: '0.75rem' }}>
               Preview
             </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-              <span style={{ fontSize: '2rem' }}>{categoryData.icon}</span>
-              <Typography variant="h6" sx={{ color: '#4B0082' }}>
-                {categoryData.name || 'Category Name'}
-              </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mt: 1.5 }}>
+              <span style={{ fontSize: '2.5rem' }}>{categoryData.icon}</span>
+              <div>
+                <Typography variant="h6" sx={{ color: '#1E293B', fontWeight: 700 }}>
+                  {categoryData.name || 'Category Name'}
+                </Typography>
+                {categoryData.description && (
+                  <Typography variant="body2" sx={{ color: '#64748B', mt: 0.5, fontStyle: 'italic' }}>
+                    "{categoryData.description}"
+                  </Typography>
+                )}
+              </div>
             </Box>
-            {categoryData.description && (
-              <Typography variant="body2" sx={{ color: '#7E6BC7', mt: 1, fontStyle: 'italic' }}>
-                "{categoryData.description}"
-              </Typography>
-            )}
           </Box>
         </Box>
       </DialogContent>
-      
-      <DialogActions sx={{ p: 2, justifyContent: 'space-between' }}>
-        <Button 
-          onClick={handleClose} 
-          sx={{ 
-            color: '#4B0082',
-            fontWeight: 'bold'
+
+      <DialogActions sx={{
+        backgroundColor: '#F8FAFC',
+        borderTop: '1px solid #E2E8F0',
+        padding: '16px 24px',
+        gap: 2
+      }}>
+        <Button
+          onClick={handleClose}
+          sx={{
+            color: '#64748B',
+            '&:hover': {
+              backgroundColor: '#E2E8F0'
+            }
           }}
         >
           Cancel
         </Button>
-        <Button 
-          onClick={handleSubmit} 
-          variant="contained" 
-          sx={{ 
-            backgroundColor: '#B19CD9', 
-            color: '#FFFFFF',
-            fontWeight: 'bold',
-            '&:hover': { backgroundColor: '#9A7EB8' }
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          sx={{
+            backgroundColor: '#2563EB',
+            '&:hover': {
+              backgroundColor: '#1E40AF'
+            }
           }}
         >
           Add Category

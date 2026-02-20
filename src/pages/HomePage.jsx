@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Card, 
-  CardContent, 
-  Grid, 
-  TextField, 
-  Button, 
-  Select, 
-  MenuItem, 
-  FormControl, 
-  InputLabel, 
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
   Box,
   Paper,
   Table,
@@ -22,28 +22,28 @@ import {
   Chip,
   IconButton,
   Fab,
-  Link,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails
+  Link
 } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, ArrowUpward, ArrowDownward, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import { useBudget } from '../contexts/BudgetContext';
 import TransactionForm from '../components/TransactionForm';
+import AddCategoryPopup from '../components/AddCategoryPopup';
 import { formatCurrency, filterTransactionsByPeriod } from '../utils/helpers';
 import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const { transactions, categories, addTransaction, deleteTransaction, updateTransaction, calculateTotals } = useBudget();
-  const [selectedPeriod, setSelectedPeriod] = useState('week'); // week or month
+  const [selectedPeriod, setSelectedPeriod] = useState('week');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
-  const [categoriesExpanded, setCategoriesExpanded] = useState(true);
-  const [transactionsExpanded, setTransactionsExpanded] = useState(true);
-  const [notesExpanded, setNotesExpanded] = useState(true);
-  
+  const [showAddCategoryPopup, setShowAddCategoryPopup] = useState(false);
+
   const filteredTransactions = filterTransactionsByPeriod(transactions, selectedPeriod);
   const navigate = useNavigate();
+
+  const handleAddCategory = (categoryData) => {
+    addTransaction(categoryData);
+  };
   
   const handleAddTransaction = (data) => {
     if (editingTransaction) {
@@ -79,446 +79,430 @@ const HomePage = () => {
   };
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ 
-      paddingLeft: { xs: 0, sm: 2 }, 
-      paddingRight: { xs: 0, sm: 2 },
+    <Container maxWidth="lg" disableGutters sx={{
+      paddingX: { xs: 0, sm: 0 },
       width: '100%',
       boxSizing: 'border-box'
     }}>
-      {/* User greeting section */}
-      <Box mb={3} pt={2} sx={{ width: '100%' }}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-          Hello, User
+      {/* Header Section */}
+      <Box mb={4}>
+        <Typography variant="h3" component="h1" gutterBottom sx={{
+          color: '#1E293B',
+          fontWeight: 700,
+          fontSize: { xs: '1.75rem', sm: '2.5rem' }
+        }}>
+          Dashboard
         </Typography>
-        <Typography variant="h6" component="h2" gutterBottom sx={{ color: '#7E6BC7', fontWeight: 'normal', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-          Good Day!
+        <Typography variant="body1" sx={{
+          color: '#64748B',
+          fontSize: { xs: '0.95rem', sm: '1.05rem' }
+        }}>
+          {getCurrentDateFormatted()}
         </Typography>
       </Box>
 
       {/* Period and Financial Summary Container */}
-      <Paper 
-        elevation={2} 
-        sx={{ 
-          p: { xs: 1, sm: 2 }, 
-          backgroundColor: '#F5F3FF', 
-          borderRadius: 2,
-          mb: 3,
-          background: 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)',
-          width: '100%',
-          boxSizing: 'border-box'
+      <Box
+        sx={{
+          mb: 4,
+          display: 'flex',
+          gap: 2,
+          alignItems: 'center',
+          flexDirection: { xs: 'column', sm: 'row' },
+          justifyContent: 'space-between'
         }}
       >
-        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2} flexDirection={{ xs: 'column', sm: 'row' }} gap={{ xs: 1, sm: 0 }}>
-          <Box display="flex" alignItems="center" gap={2} flexDirection={{ xs: 'column', sm: 'row' }} width="100%">
-            <Typography variant="h6" sx={{ color: '#4B0082', fontWeight: 'bold', textAlign: { xs: 'center', sm: 'left' } }}>
-              {selectedPeriod === 'week' ? 'This Week' : selectedPeriod === 'month' ? 'This Month' : 'This Year'}
-            </Typography>
-            <FormControl size="small" sx={{ 
-              minWidth: { xs: '100%', sm: 150 }, 
-              backgroundColor: 'white', 
-              borderRadius: 1, 
-              mt: { xs: 1, sm: 0 },
-              width: { xs: '100%', sm: 'auto' }
-            }}>
-              <Select
-                value={selectedPeriod}
-                onChange={(e) => setSelectedPeriod(e.target.value)}
-                sx={{ fontWeight: 'bold' }}
-              >
-                <MenuItem value="week">This Week</MenuItem>
-                <MenuItem value="half-month">This Half-Month</MenuItem>
-                <MenuItem value="month">This Month</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Typography variant="body1" sx={{ color: '#7E6BC7', textAlign: { xs: 'center', sm: 'right' }, width: { xs: '100%', sm: 'auto' } }}>
-            {getCurrentDateFormatted()}
+        <Box display="flex" gap={2} flexDirection={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'center' }} width={{ xs: '100%', sm: 'auto' }}>
+          <Typography variant="h6" sx={{
+            color: '#1E293B',
+            fontWeight: 600,
+            whiteSpace: { xs: 'normal', sm: 'nowrap' }
+          }}>
+            {selectedPeriod === 'week' ? 'This Week' : selectedPeriod === 'month' ? 'This Month' : 'This Half-Month'}
           </Typography>
+          <FormControl size="small" sx={{
+            minWidth: { xs: '100%', sm: 160 },
+            backgroundColor: '#FFFFFF',
+            borderRadius: 1,
+          }}>
+            <Select
+              value={selectedPeriod}
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              sx={{ fontWeight: 600, fontSize: '0.9rem' }}
+            >
+              <MenuItem value="week">This Week</MenuItem>
+              <MenuItem value="half-month">This Half-Month</MenuItem>
+              <MenuItem value="month">This Month</MenuItem>
+            </Select>
+          </FormControl>
         </Box>
-        
-        <Grid container spacing={1} sx={{ mt: 0.5 }}>
-          <Grid item xs={12} sm={4}>
-            <Card 
-              sx={{ 
-                background: 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)', 
-                boxShadow: 3, 
-                borderRadius: 3,
-                cursor: 'pointer',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: 6,
-                },
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                height: '100%',
-                minHeight: { xs: 100, sm: 120 },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                py: 1
-              }}
-              onClick={() => goToTransactionHistory('income')}
-            >
-              <CardContent sx={{ textAlign: 'center', width: '100%', py: 1, px: 1 }}>
-                <Box display="flex" alignItems="center" justifyContent="center" mb={0.5}>
-                  <Typography variant="h6" color="textSecondary" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                    Income
-                  </Typography>
-                  <Link href="#" underline="none" onClick={(e) => {
-                    e.preventDefault();
-                    goToTransactionHistory('income');
-                  }} sx={{ ml: 0.5 }}>
-                    <ArrowUpward sx={{ color: '#4CAF50', fontSize: 18 }} />
-                  </Link>
-                </Box>
-                <Typography variant="h5" component="h2" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                  {formatCurrency(totals.totalIncome)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Card 
-              sx={{ 
-                background: 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)', 
-                boxShadow: 3, 
-                borderRadius: 3,
-                cursor: 'pointer',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: 6,
-                },
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                height: '100%',
-                minHeight: { xs: 100, sm: 120 },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                py: 1
-              }}
-              onClick={() => goToTransactionHistory('expense')}
-            >
-              <CardContent sx={{ textAlign: 'center', width: '100%', py: 1, px: 1 }}>
-                <Box display="flex" alignItems="center" justifyContent="center" mb={0.5}>
-                  <Typography variant="h6" color="textSecondary" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                    Expenses
-                  </Typography>
-                  <Link href="#" underline="none" onClick={(e) => {
-                    e.preventDefault();
-                    goToTransactionHistory('expense');
-                  }} sx={{ ml: 0.5 }}>
-                    <ArrowDownward sx={{ color: '#F44336', fontSize: 18 }} />
-                  </Link>
-                </Box>
-                <Typography variant="h5" component="h2" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                  {formatCurrency(totals.totalExpenses)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Card 
-              sx={{ 
-                background: totals.remainingBalance >= 0 
-                  ? 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)' 
-                  : 'linear-gradient(135deg, #FFFFFF 0%, #FFE4E6 100%)', 
-                boxShadow: 3, 
-                borderRadius: 3,
-                cursor: 'pointer',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: 6,
-                },
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                height: '100%',
-                minHeight: { xs: 100, sm: 120 },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                py: 1
-              }}
-            >
-              <CardContent sx={{ textAlign: 'center', width: '100%', py: 1, px: 1 }}>
-                <Box display="flex" alignItems="center" justifyContent="center" mb={0.5}>
-                  <Typography variant="h6" color="textSecondary" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                    Remaining
-                  </Typography>
-                  <Link href="#" underline="none" onClick={(e) => {
-                    e.preventDefault();
-                    // Show all transactions when clicking on remaining balance
-                    goToTransactionHistory('all');
-                  }} sx={{ ml: 0.5 }}>
-                    {totals.remainingBalance >= 0 ? 
-                      <ArrowUpward sx={{ color: '#4B0082', fontSize: 18 }} /> : 
-                      <ArrowDownward sx={{ color: '#D32F2F', fontSize: 18 }} />
-                    }
-                  </Link>
-                </Box>
-                <Typography variant="h5" component="h2" sx={{ 
-                  color: '#4B0082', 
-                  fontWeight: 'bold',
-                  color: totals.remainingBalance >= 0 ? '#4B0082' : '#D32F2F',
-                  fontSize: { xs: '1rem', sm: '1.25rem' }
-                }}>
-                  {formatCurrency(totals.remainingBalance)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+      </Box>
+
+      {/* Financial Summary Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* Income Card */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card
+            sx={{
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              color: '#FFFFFF',
+              borderRadius: 3,
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(16, 185, 129, 0.15)',
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                transform: 'translateY(-8px)',
+                boxShadow: '0 15px 40px rgba(16, 185, 129, 0.25)',
+              },
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: -2,
+                right: -2,
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              }
+            }}
+            onClick={() => goToTransactionHistory('income')}
+          >
+            <CardContent sx={{ position: 'relative', zIndex: 1, pb: 3 }}>
+              <Typography variant="body2" sx={{ opacity: 0.9, mb: 2, fontWeight: 500 }}>
+                Total Income
+              </Typography>
+              <Typography variant="h3" sx={{ mb: 2, fontWeight: 700, fontSize: '2rem' }}>
+                {formatCurrency(totals.totalIncome)}
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.85, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <ArrowUpward sx={{ fontSize: '1.2rem' }} />
+                Click to view details
+              </Typography>
+            </CardContent>
+          </Card>
         </Grid>
-      </Paper>
+
+        {/* Expenses Card */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card
+            sx={{
+              background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+              color: '#FFFFFF',
+              borderRadius: 3,
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(239, 68, 68, 0.15)',
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                transform: 'translateY(-8px)',
+                boxShadow: '0 15px 40px rgba(239, 68, 68, 0.25)',
+              },
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: -2,
+                right: -2,
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              }
+            }}
+            onClick={() => goToTransactionHistory('expense')}
+          >
+            <CardContent sx={{ position: 'relative', zIndex: 1, pb: 3 }}>
+              <Typography variant="body2" sx={{ opacity: 0.9, mb: 2, fontWeight: 500 }}>
+                Total Expenses
+              </Typography>
+              <Typography variant="h3" sx={{ mb: 2, fontWeight: 700, fontSize: '2rem' }}>
+                {formatCurrency(totals.totalExpenses)}
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.85, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <ArrowDownward sx={{ fontSize: '1.2rem' }} />
+                Click to view details
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Remaining Balance Card */}
+        <Grid item xs={12} sm={12} md={4}>
+          <Card
+            sx={{
+              background: totals.remainingBalance >= 0
+                ? 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)'
+                : 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+              color: '#FFFFFF',
+              borderRadius: 3,
+              overflow: 'hidden',
+              boxShadow: `0 10px 30px rgba(${totals.remainingBalance >= 0 ? '37, 99, 235' : '245, 158, 11'}, 0.15)`,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                transform: 'translateY(-8px)',
+                boxShadow: `0 15px 40px rgba(${totals.remainingBalance >= 0 ? '37, 99, 235' : '245, 158, 11'}, 0.25)`,
+              },
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: -2,
+                right: -2,
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              }
+            }}
+          >
+            <CardContent sx={{ position: 'relative', zIndex: 1, pb: 3 }}>
+              <Typography variant="body2" sx={{ opacity: 0.9, mb: 2, fontWeight: 500 }}>
+                Remaining Balance
+              </Typography>
+              <Typography variant="h3" sx={{ mb: 2, fontWeight: 700, fontSize: '2rem' }}>
+                {formatCurrency(totals.remainingBalance)}
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.85 }}>
+                {totals.remainingBalance >= 0 ? '✓ Good balance' : '⚠ Low balance'}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
       {/* Categories Section */}
-      <Accordion 
-        sx={{ mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}
-        expanded={categoriesExpanded}
-        onChange={() => setCategoriesExpanded(!categoriesExpanded)}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          sx={{ 
-            backgroundColor: '#EDE9FE',
-            borderRadius: 2,
-            '&:hover': { backgroundColor: '#D8CCE8' }
+      <Card sx={{ mb: 4, backgroundColor: '#FFFFFF', borderRadius: 3, border: '1px solid #E2E8F0' }}>
+        <Box
+          sx={{
+            padding: '20px',
+            backgroundColor: '#F8FAFC',
+            borderBottom: '1px solid #E2E8F0',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderRadius: '12px 12px 0 0'
           }}
         >
-          <Typography variant="h6" sx={{ color: '#4B0082', fontWeight: 'bold' }}>
+          <Typography variant="h5" sx={{ color: '#1E293B', fontWeight: 700 }}>
             My Categories
           </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Grid container spacing={1} sx={{ py: 1, width: '100%', boxSizing: 'border-box' }}>
-            {categories.map((category) => (
-              <Grid item xs={6} sm={4} md={2} key={category.id}>
-                <Card sx={{ 
-                  backgroundColor: '#FFFFFF', 
-                  textAlign: 'center', 
-                  padding: 1,
-                  borderRadius: 2,
-                  border: '1px solid #B19CD9',
-                  '&:hover': { backgroundColor: '#F8F5FF' },
-                  minHeight: 70,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center'
-                }}>
-                  <div style={{ fontSize: '16px', marginBottom: '2px' }}>💰</div>
-                  <Typography variant="body2" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: '0.7rem' }}>
-                    {category.name}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#7E6BC7', fontSize: '0.6rem' }}>
-                    ${category.expenseTotal ? category.expenseTotal.toFixed(2) : '0.00'}
-                  </Typography>
-                </Card>
+          <Button
+            startIcon={<AddIcon />}
+            variant="contained"
+            onClick={() => setShowAddCategoryPopup(true)}
+            sx={{
+              backgroundColor: '#2563EB',
+              '&:hover': { backgroundColor: '#1E40AF' }
+            }}
+          >
+            Add Category
+          </Button>
+        </Box>
+        <CardContent sx={{ p: 3 }}>
+          <Grid container spacing={2}>
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <Grid item xs={6} sm={4} md={3} key={category.id}>
+                  <Card
+                    sx={{
+                      textAlign: 'center',
+                      padding: 2,
+                      borderRadius: 2,
+                      backgroundColor: '#F8FAFC',
+                      border: '1px solid #E2E8F0',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        backgroundColor: '#EFF6FF',
+                        borderColor: '#2563EB',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.1)'
+                      },
+                      minHeight: 90,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      gap: 1
+                    }}
+                  >
+                    <Typography sx={{ fontSize: '2rem' }}>💰</Typography>
+                    <Typography variant="body1" sx={{ color: '#1E293B', fontWeight: 600, fontSize: '0.95rem' }}>
+                      {category.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 500 }}>
+                      ${category.expenseTotal ? category.expenseTotal.toFixed(2) : '0.00'}
+                    </Typography>
+                  </Card>
+                </Grid>
+              ))
+            ) : (
+              <Grid item xs={12}>
+                <Typography variant="body1" sx={{ color: '#64748B', textAlign: 'center', py: 4 }}>
+                  No categories yet. Create one to get started!
+                </Typography>
               </Grid>
-            ))}
+            )}
           </Grid>
-        </AccordionDetails>
-      </Accordion>
+        </CardContent>
+      </Card>
 
       {/* Transactions Section */}
-      <Accordion 
-        sx={{ mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}
-        expanded={transactionsExpanded}
-        onChange={() => setTransactionsExpanded(!transactionsExpanded)}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          sx={{ 
-            backgroundColor: '#EDE9FE',
-            borderRadius: 2,
-            '&:hover': { backgroundColor: '#D8CCE8' }
+      <Card sx={{ backgroundColor: '#FFFFFF', borderRadius: 3, border: '1px solid #E2E8F0', mb: 4 }}>
+        <Box
+          sx={{
+            padding: '20px',
+            backgroundColor: '#F8FAFC',
+            borderBottom: '1px solid #E2E8F0',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderRadius: '12px 12px 0 0'
           }}
         >
-          <Typography variant="h6" sx={{ color: '#4B0082', fontWeight: 'bold' }}>
-            My Transactions
+          <Typography variant="h5" sx={{ color: '#1E293B', fontWeight: 700 }}>
+            Recent Transactions
           </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Paper elevation={2} sx={{ p: 1, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} flexDirection={{ xs: 'column', sm: 'row' }} gap={1}>
-              <Typography variant="h6" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                Recent Transactions
-              </Typography>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => setIsFormOpen(true)}
-                sx={{ 
-                  backgroundColor: '#B19CD9', 
-                  color: '#FFFFFF',
-                  '&:hover': { backgroundColor: '#9A7EB8' },
-                  fontWeight: 'bold',
-                  alignSelf: { xs: 'stretch', sm: 'auto' },
-                  width: { xs: '100%', sm: 'auto' },
-                  py: 1
-                }}
-              >
-                Add Transaction
-              </Button>
-            </Box>
-            
-            <TableContainer sx={{ width: '100%', boxSizing: 'border-box' }}>
-              <Table sx={{ minWidth: 280 }}>
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: '#EDE9FE' }}>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Name</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Date</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Category</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Amount</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Type</TableCell>
-                    <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredTransactions.slice(0, 5).map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>{transaction.name}</TableCell>
-                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>{transaction.date}</TableCell>
-                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
-                        <Chip 
-                          label={transaction.category} 
-                          sx={{ 
-                            backgroundColor: '#EDE9FE', 
-                            color: '#4B0082',
-                            fontWeight: 'bold',
-                            fontSize: '0.6rem',
-                            height: '20px',
-                            '& .MuiChip-label': {
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              pl: 0.5,
-                              pr: 0.5
-                            }
-                          }} 
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setIsFormOpen(true)}
+            sx={{
+              backgroundColor: '#2563EB',
+              '&:hover': { backgroundColor: '#1E40AF' }
+            }}
+          >
+            Add Transaction
+          </Button>
+        </Box>
+
+        <CardContent sx={{ p: 0 }}>
+          <TableContainer sx={{ width: '100%' }}>
+            <Table sx={{ minWidth: 500 }}>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
+                  <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Name</TableCell>
+                  <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Date</TableCell>
+                  <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Category</TableCell>
+                  <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Amount</TableCell>
+                  <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Type</TableCell>
+                  <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredTransactions.length > 0 ? (
+                  filteredTransactions.slice(0, 8).map((transaction) => (
+                    <TableRow
+                      key={transaction.id}
+                      sx={{
+                        borderBottom: '1px solid #E2E8F0',
+                        '&:hover': {
+                          backgroundColor: '#F8FAFC'
+                        },
+                        transition: 'background-color 0.2s'
+                      }}
+                    >
+                      <TableCell sx={{ fontSize: '0.9rem', color: '#1E293B', fontWeight: 500 }}>{transaction.name}</TableCell>
+                      <TableCell sx={{ fontSize: '0.9rem', color: '#64748B' }}>{transaction.date}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={transaction.category}
+                          sx={{
+                            backgroundColor: '#EFF6FF',
+                            color: '#2563EB',
+                            fontWeight: 600,
+                            fontSize: '0.75rem',
+                            border: '1px solid #BFDBFE'
+                          }}
                         />
                       </TableCell>
-                      <TableCell sx={{ 
-                        color: transaction.type === 'income' ? '#4CAF50' : '#F44336',
-                        fontWeight: 'bold',
-                        fontSize: { xs: '0.7rem', sm: '0.8rem' },
-                        px: { xs: 0.5, sm: 1 },
-                        py: { xs: 0.5, sm: 1 }
+                      <TableCell sx={{
+                        color: transaction.type === 'income' ? '#10B981' : '#EF4444',
+                        fontWeight: 700,
+                        fontSize: '0.95rem'
                       }}>
                         {transaction.type === 'income' ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
                       </TableCell>
-                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
-                        <Chip 
-                          label={transaction.type} 
-                          sx={{ 
-                            backgroundColor: transaction.type === 'income' ? '#E8F5E9' : '#FFEBEE',
-                            color: transaction.type === 'income' ? '#2E7D32' : '#C62828',
-                            fontWeight: 'bold',
-                            fontSize: '0.6rem',
-                            height: '20px',
-                            '& .MuiChip-label': {
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              pl: 0.5,
-                              pr: 0.5
-                            }
-                          }} 
+                      <TableCell>
+                        <Chip
+                          label={transaction.type}
+                          sx={{
+                            backgroundColor: transaction.type === 'income' ? '#D1FAE5' : '#FEE2E2',
+                            color: transaction.type === 'income' ? '#059669' : '#DC2626',
+                            fontWeight: 600,
+                            fontSize: '0.75rem',
+                            border: `1px solid ${transaction.type === 'income' ? '#A7F3D0' : '#FECACA'}`
+                          }}
                         />
                       </TableCell>
-                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
-                        <Box display="flex" justifyContent="space-around">
-                          <IconButton 
-                            size="small" 
-                            sx={{ color: '#7E6BC7', padding: '4px', minWidth: '32px' }}
+                      <TableCell>
+                        <Box display="flex" gap={1}>
+                          <IconButton
+                            size="small"
                             onClick={() => handleEditClick(transaction)}
+                            sx={{
+                              color: '#2563EB',
+                              padding: '4px',
+                              '&:hover': { backgroundColor: 'rgba(37, 99, 235, 0.08)' }
+                            }}
                           >
                             <EditIcon fontSize="small" />
                           </IconButton>
-                          <IconButton 
-                            size="small" 
-                            sx={{ color: '#D32F2F', padding: '4px', minWidth: '32px' }}
+                          <IconButton
+                            size="small"
                             onClick={() => deleteTransaction(transaction.id)}
+                            sx={{
+                              color: '#EF4444',
+                              padding: '4px',
+                              '&:hover': { backgroundColor: 'rgba(239, 68, 68, 0.08)' }
+                            }}
                           >
                             <DeleteIcon fontSize="small" />
                           </IconButton>
                         </Box>
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </AccordionDetails>
-      </Accordion>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} sx={{ textAlign: 'center', py: 4, color: '#64748B' }}>
+                      No transactions yet. Add your first transaction to get started!
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
 
-      {/* Notes Section */}
-      <Accordion 
-        sx={{ mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}
-        expanded={notesExpanded}
-        onChange={() => setNotesExpanded(!notesExpanded)}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          sx={{ 
-            backgroundColor: '#EDE9FE',
-            borderRadius: 2,
-            '&:hover': { backgroundColor: '#D8CCE8' }
-          }}
-        >
-          <Typography variant="h6" sx={{ color: '#4B0082', fontWeight: 'bold' }}>
-            Notes
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Paper elevation={2} sx={{ p: 1, backgroundColor: '#FFFFFF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}>
-            <TextField
-              multiline
-              rows={4}
-              placeholder="Write your notes here..."
-              fullWidth
-              variant="outlined"
-              sx={{ 
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: '#F8F5FF',
-                  py: 0.5,
-                  px: 0.5
-                }
-              }}
-            />
-            <Box display="flex" justifyContent="flex-end" mt={1}>
-              <Button
-                variant="contained"
-                sx={{ 
-                  backgroundColor: '#B19CD9', 
-                  color: '#FFFFFF',
-                  '&:hover': { backgroundColor: '#9A7EB8' },
-                  fontWeight: 'bold',
-                  py: 0.5
-                }}
-              >
-                Save Note
-              </Button>
-            </Box>
-          </Paper>
-        </AccordionDetails>
-      </Accordion>
-      
       {/* Floating Action Button for mobile devices */}
-      <Fab 
-        color="primary" 
-        aria-label="add" 
+      <Fab
+        color="primary"
+        aria-label="add"
         onClick={() => setIsFormOpen(true)}
-        sx={{ 
-          position: 'fixed', 
-          bottom: 16, 
-          right: 16, 
-          backgroundColor: '#B19CD9',
-          '&:hover': { backgroundColor: '#9A7EB8' }
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          backgroundColor: '#2563EB',
+          boxShadow: '0 10px 30px rgba(37, 99, 235, 0.3)',
+          '&:hover': {
+            backgroundColor: '#1E40AF',
+            boxShadow: '0 15px 40px rgba(37, 99, 235, 0.4)',
+          },
+          display: { xs: 'flex', md: 'none' }
         }}
-        style={{ display: { xs: 'block', sm: 'none' } }}
       >
         <AddIcon />
       </Fab>
-      
+
       {/* Transaction Form Dialog */}
-      <TransactionForm 
+      <TransactionForm
         open={isFormOpen}
         onClose={() => {
           setIsFormOpen(false);
@@ -527,6 +511,13 @@ const HomePage = () => {
         onSubmit={handleAddTransaction}
         transaction={editingTransaction}
         categories={categories}
+      />
+
+      {/* Add Category Popup */}
+      <AddCategoryPopup
+        open={showAddCategoryPopup}
+        onClose={() => setShowAddCategoryPopup(false)}
+        onAdd={handleAddCategory}
       />
     </Container>
   );
