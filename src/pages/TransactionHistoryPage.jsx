@@ -84,101 +84,114 @@ const TransactionHistoryPage = () => {
     }}>
       <Box mb={4} sx={{ width: '100%' }}>
         {/* Breadcrumbs */}
-        <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-          <MuiLink component={Link} underline="hover" color="inherit" to="/home">
-            <HomeIcon sx={{ mr: 0.5, fontSize: '1rem' }} />
-            Home
-          </MuiLink>
-          <Typography color="text.primary" fontSize="0.875rem">Transaction History</Typography>
-        </Breadcrumbs>
-        
         <Box display="flex" alignItems="center" justifyContent="space-between" mb={3} flexDirection={{ xs: 'column', sm: 'row' }} gap={2}>
-          <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
-            Transaction History
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBack />}
-            component={Link}
-            to="/home"
-            sx={{ 
-              borderColor: '#B19CD9', 
-              color: '#4B0082',
-              '&:hover': { 
-                backgroundColor: '#F3E8FF',
-                borderColor: '#9A7EB8'
-              },
-              width: { xs: '100%', sm: 'auto' },
-              py: 1
-            }}
-          >
-            Back to Dashboard
-          </Button>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Button
+              startIcon={<ArrowBack />}
+              onClick={() => navigate('/home')}
+              sx={{
+                color: '#2563EB',
+                textTransform: 'none',
+                '&:hover': { backgroundColor: 'rgba(37, 99, 235, 0.08)' }
+              }}
+            >
+              Back
+            </Button>
+            <Typography variant="h3" sx={{ color: '#1E293B', fontWeight: 700, fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+              Transaction History
+            </Typography>
+          </Box>
         </Box>
         
         {/* Summary Cards */}
-        <Grid container spacing={1} sx={{ mb: 3 }}>
+        <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={4}>
-            <Card sx={{ 
-              background: 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)', 
-              boxShadow: 3, 
+            <Card sx={{
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              color: '#FFFFFF',
               borderRadius: 3,
-              minHeight: 100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(16, 185, 129, 0.15)',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: -2,
+                right: -2,
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              }
             }}>
-              <CardContent sx={{ textAlign: 'center', width: '100%', py: 1, px: 1 }}>
-                <Typography variant="h6" color="textSecondary" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+              <CardContent sx={{ position: 'relative', zIndex: 1, pb: 2 }}>
+                <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
                   Total Income
                 </Typography>
-                <Typography variant="h5" component="h2" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, fontSize: '1.75rem' }}>
                   {formatCurrency(filteredTotals.totalIncome)}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Card sx={{ 
-              background: 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)', 
-              boxShadow: 3, 
+            <Card sx={{
+              background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+              color: '#FFFFFF',
               borderRadius: 3,
-              minHeight: 100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(239, 68, 68, 0.15)',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: -2,
+                right: -2,
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              }
             }}>
-              <CardContent sx={{ textAlign: 'center', width: '100%', py: 1, px: 1 }}>
-                <Typography variant="h6" color="textSecondary" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+              <CardContent sx={{ position: 'relative', zIndex: 1, pb: 2 }}>
+                <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
                   Total Expenses
                 </Typography>
-                <Typography variant="h5" component="h2" sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, fontSize: '1.75rem' }}>
                   {formatCurrency(filteredTotals.totalExpenses)}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Card sx={{ 
-              background: filteredTotals.remainingBalance >= 0 
-                ? 'linear-gradient(135deg, #FFFFFF 0%, #EDE9FE 100%)' 
-                : 'linear-gradient(135deg, #FFFFFF 0%, #FFE4E6 100%)', 
-              boxShadow: 3, 
+            <Card sx={{
+              background: filteredTotals.remainingBalance >= 0
+                ? 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)'
+                : 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+              color: '#FFFFFF',
               borderRadius: 3,
-              minHeight: 100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              overflow: 'hidden',
+              boxShadow: `0 10px 30px rgba(${filteredTotals.remainingBalance >= 0 ? '37, 99, 235' : '245, 158, 11'}, 0.15)`,
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: -2,
+                right: -2,
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              }
             }}>
-              <CardContent sx={{ textAlign: 'center', width: '100%', py: 1, px: 1 }}>
-                <Typography variant="h6" color="textSecondary" gutterBottom sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+              <CardContent sx={{ position: 'relative', zIndex: 1, pb: 2 }}>
+                <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
                   Remaining Balance
                 </Typography>
-                <Typography variant="h5" component="h2" sx={{ 
-                  color: filteredTotals.remainingBalance >= 0 ? '#4B0082' : '#D32F2F',
-                  fontWeight: 'bold',
-                  fontSize: { xs: '1rem', sm: '1.25rem' }
-                }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, fontSize: '1.75rem' }}>
                   {formatCurrency(filteredTotals.remainingBalance)}
                 </Typography>
               </CardContent>
@@ -187,45 +200,60 @@ const TransactionHistoryPage = () => {
         </Grid>
 
         {/* Filters */}
-        <Paper elevation={2} sx={{ p: 1, mb: 3, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}>
-          <Grid container spacing={1} alignItems="center" flexDirection={{ xs: 'column', sm: 'row' }}>
-            <Grid item xs={12} sm={4}>
-              <FormControl fullWidth size="small" sx={{ backgroundColor: 'white', borderRadius: 1, mb: { xs: 1, sm: 0 }, width: { xs: '100%', sm: 'auto' } }}>
-                <InputLabel>Type</InputLabel>
-                <Select
-                  value={transactionType}
-                  label="Type"
-                  onChange={(e) => setTransactionType(e.target.value)}
-                  sx={{ fontSize: '0.875rem' }}
-                >
-                  <MenuItem value="all">All Transactions</MenuItem>
-                  <MenuItem value="income">Income Only</MenuItem>
-                  <MenuItem value="expense">Expenses Only</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <FormControl fullWidth size="small" sx={{ backgroundColor: 'white', borderRadius: 1, mb: { xs: 1, sm: 0 }, width: { xs: '100%', sm: 'auto' } }}>
-                <InputLabel>Period</InputLabel>
-                <Select
-                  value={selectedPeriod}
-                  label="Period"
-                  onChange={(e) => setSelectedPeriod(e.target.value)}
-                  sx={{ fontSize: '0.875rem' }}
-                >
-                  <MenuItem value="week">This Week</MenuItem>
-                  <MenuItem value="month">This Month</MenuItem>
-                  <MenuItem value="year">This Year</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Typography variant="body1" sx={{ color: '#4B0082', fontWeight: 'bold', textAlign: { xs: 'center', sm: 'left' }, fontSize: '0.875rem' }}>
-                Showing {filteredTransactions.length} transactions
-              </Typography>
-            </Grid>
-          </Grid>
-        </Paper>
+        <Card sx={{ mb: 4, backgroundColor: '#FFFFFF', borderRadius: 3, border: '1px solid #E2E8F0' }}>
+          <Box sx={{ padding: '20px', display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+            <FormControl sx={{ minWidth: { xs: '100%', sm: 150 } }}>
+              <InputLabel>Type</InputLabel>
+              <Select
+                value={transactionType}
+                label="Type"
+                onChange={(e) => setTransactionType(e.target.value)}
+                sx={{
+                  borderRadius: 1.5,
+                  backgroundColor: '#F8FAFC',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#E2E8F0'
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#2563EB'
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#2563EB'
+                  }
+                }}
+              >
+                <MenuItem value="all">All Transactions</MenuItem>
+                <MenuItem value="income">Income Only</MenuItem>
+                <MenuItem value="expense">Expenses Only</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl sx={{ minWidth: { xs: '100%', sm: 150 } }}>
+              <InputLabel>Period</InputLabel>
+              <Select
+                value={selectedPeriod}
+                label="Period"
+                onChange={(e) => setSelectedPeriod(e.target.value)}
+                sx={{
+                  borderRadius: 1.5,
+                  backgroundColor: '#F8FAFC',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#E2E8F0'
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#2563EB'
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#2563EB'
+                  }
+                }}
+              >
+                <MenuItem value="week">This Week</MenuItem>
+                <MenuItem value="month">This Month</MenuItem>
+                <MenuItem value="year">This Year</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </Card>
 
         {/* Transactions Table */}
         <Paper elevation={2} sx={{ p: 1, backgroundColor: '#F5F3FF', borderRadius: 2, width: '100%', boxSizing: 'border-box' }}>

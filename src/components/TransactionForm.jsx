@@ -50,12 +50,29 @@ const TransactionForm = ({ open, onClose, onSubmit, transaction = null, categori
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ color: '#4B0082', fontWeight: 'bold' }}>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: 3,
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)'
+        }
+      }}
+    >
+      <DialogTitle sx={{
+        fontSize: '1.5rem',
+        fontWeight: 700,
+        color: '#1E293B',
+        backgroundColor: '#F8FAFC',
+        borderBottom: '1px solid #E2E8F0',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1
+      }}>
+        {isEditing ? <EditIcon sx={{ color: '#2563EB' }} /> : <AddIcon sx={{ color: '#2563EB' }} />}
         {isEditing ? 'Edit Transaction' : 'Add New Transaction'}
       </DialogTitle>
       <form onSubmit={handleSubmit}>
-        <DialogContent>
+        <DialogContent sx={{ pt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -66,8 +83,19 @@ const TransactionForm = ({ open, onClose, onSubmit, transaction = null, categori
                 onChange={handleChange}
                 required
                 variant="outlined"
-                size="small"
-                sx={{ backgroundColor: '#FFFFFF', borderRadius: 1 }}
+                size="medium"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 1.5,
+                    backgroundColor: '#F8FAFC',
+                    '&:hover fieldset': {
+                      borderColor: '#2563EB'
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#2563EB'
+                    }
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -80,19 +108,43 @@ const TransactionForm = ({ open, onClose, onSubmit, transaction = null, categori
                 onChange={handleChange}
                 required
                 variant="outlined"
-                size="small"
-                sx={{ backgroundColor: '#FFFFFF', borderRadius: 1 }}
+                size="medium"
+                inputProps={{ step: '0.01', min: '0' }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 1.5,
+                    backgroundColor: '#F8FAFC',
+                    '&:hover fieldset': {
+                      borderColor: '#2563EB'
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#2563EB'
+                    }
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Category</InputLabel>
+              <FormControl fullWidth size="medium">
+                <InputLabel sx={{ backgroundColor: '#FFFFFF', px: 0.5 }}>Category</InputLabel>
                 <Select
                   name="category"
                   value={formData.category}
                   label="Category"
                   onChange={handleChange}
-                  sx={{ backgroundColor: '#FFFFFF', borderRadius: 1 }}
+                  sx={{
+                    borderRadius: 1.5,
+                    backgroundColor: '#F8FAFC',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#E2E8F0'
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#2563EB'
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#2563EB'
+                    }
+                  }}
                 >
                   {categories.map(cat => (
                     <MenuItem key={cat.id} value={cat.name}>{cat.name}</MenuItem>
@@ -101,14 +153,26 @@ const TransactionForm = ({ open, onClose, onSubmit, transaction = null, categori
               </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Type</InputLabel>
+              <FormControl fullWidth size="medium">
+                <InputLabel sx={{ backgroundColor: '#FFFFFF', px: 0.5 }}>Type</InputLabel>
                 <Select
                   name="type"
                   value={formData.type}
                   label="Type"
                   onChange={handleChange}
-                  sx={{ backgroundColor: '#FFFFFF', borderRadius: 1 }}
+                  sx={{
+                    borderRadius: 1.5,
+                    backgroundColor: '#F8FAFC',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#E2E8F0'
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#2563EB'
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#2563EB'
+                    }
+                  }}
                 >
                   <MenuItem value="income">Income</MenuItem>
                   <MenuItem value="expense">Expense</MenuItem>
@@ -117,20 +181,34 @@ const TransactionForm = ({ open, onClose, onSubmit, transaction = null, categori
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} sx={{ color: '#4B0082' }}>Cancel</Button>
-          <Button 
-            type="submit" 
-            variant="contained" 
-            startIcon={isEditing ? <EditIcon /> : <AddIcon />}
-            sx={{ 
-              backgroundColor: '#B19CD9', 
-              color: '#FFFFFF',
-              '&:hover': { backgroundColor: '#9A7EB8' },
-              fontWeight: 'bold'
+        <DialogActions sx={{
+          backgroundColor: '#F8FAFC',
+          borderTop: '1px solid #E2E8F0',
+          padding: '16px 24px',
+          gap: 2
+        }}>
+          <Button
+            onClick={handleClose}
+            sx={{
+              color: '#64748B',
+              '&:hover': {
+                backgroundColor: '#E2E8F0'
+              }
             }}
           >
-            {isEditing ? 'Update' : 'Add'} Transaction
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              backgroundColor: '#2563EB',
+              '&:hover': {
+                backgroundColor: '#1E40AF'
+              }
+            }}
+          >
+            {isEditing ? 'Update' : 'Add'}
           </Button>
         </DialogActions>
       </form>
