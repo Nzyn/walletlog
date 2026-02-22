@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
-  TextField, 
-  Button, 
-  Select, 
-  MenuItem, 
-  FormControl, 
-  InputLabel, 
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
   Grid,
   Box
 } from '@mui/material';
@@ -17,20 +17,33 @@ import { Add as AddIcon, Edit as EditIcon } from '@mui/icons-material';
 
 const TransactionForm = ({ open, onClose, onSubmit, transaction = null, categories }) => {
   const isEditing = !!transaction;
-  
+
   const [formData, setFormData] = useState({
     name: transaction?.name || '',
     amount: transaction?.amount || '',
     category: transaction?.category || categories[0]?.name || 'Food',
-    type: transaction?.type || 'expense'
+    category_id: transaction?.category_id || categories[0]?.id || null,
+    type: transaction?.type || 'expense',
+    recipient: transaction?.recipient || ''
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+
+    // If category name changes, find and set the category_id as well
+    if (name === 'category') {
+      const selectedCat = categories.find(cat => cat.name === value);
+      setFormData(prev => ({
+        ...prev,
+        category: value,
+        category_id: selectedCat ? selectedCat.id : null
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -44,7 +57,9 @@ const TransactionForm = ({ open, onClose, onSubmit, transaction = null, categori
       name: '',
       amount: '',
       category: categories[0]?.name || 'Food',
-      type: 'expense'
+      category_id: categories[0]?.id || null,
+      type: 'expense',
+      recipient: ''
     });
     onClose();
   };
@@ -178,6 +193,30 @@ const TransactionForm = ({ open, onClose, onSubmit, transaction = null, categori
                   <MenuItem value="expense">Expense</MenuItem>
                 </Select>
               </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Recipient (For Whom)"
+                name="recipient"
+                value={formData.recipient}
+                onChange={handleChange}
+                placeholder="e.g. dan"
+                variant="outlined"
+                size="medium"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 1.5,
+                    backgroundColor: '#F8FAFC',
+                    '&:hover fieldset': {
+                      borderColor: '#2563EB'
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#2563EB'
+                    }
+                  }
+                }}
+              />
             </Grid>
           </Grid>
         </DialogContent>

@@ -44,7 +44,7 @@ const HomePage = () => {
   const handleAddCategory = (categoryData) => {
     addTransaction(categoryData);
   };
-  
+
   const handleAddTransaction = (data) => {
     if (editingTransaction) {
       updateTransaction(editingTransaction.id, data);
@@ -70,11 +70,11 @@ const HomePage = () => {
   // Function to get current date in readable format
   const getCurrentDateFormatted = () => {
     const now = new Date();
-    return now.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return now.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -386,6 +386,7 @@ const HomePage = () => {
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
                   <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Name</TableCell>
+                  <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>For Whom</TableCell>
                   <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Date</TableCell>
                   <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Category</TableCell>
                   <TableCell sx={{ color: '#1E293B', fontWeight: 700, fontSize: '0.875rem' }}>Amount</TableCell>
@@ -395,81 +396,85 @@ const HomePage = () => {
               </TableHead>
               <TableBody>
                 {filteredTransactions.length > 0 ? (
-                  filteredTransactions.slice(0, 8).map((transaction) => (
-                    <TableRow
-                      key={transaction.id}
-                      sx={{
-                        borderBottom: '1px solid #E2E8F0',
-                        '&:hover': {
-                          backgroundColor: '#F8FAFC'
-                        },
-                        transition: 'background-color 0.2s'
-                      }}
-                    >
-                      <TableCell sx={{ fontSize: '0.9rem', color: '#1E293B', fontWeight: 500 }}>{transaction.name}</TableCell>
-                      <TableCell sx={{ fontSize: '0.9rem', color: '#64748B' }}>{transaction.date}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={transaction.category}
-                          sx={{
-                            backgroundColor: '#EFF6FF',
-                            color: '#2563EB',
-                            fontWeight: 600,
-                            fontSize: '0.75rem',
-                            border: '1px solid #BFDBFE'
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell sx={{
-                        color: transaction.type === 'income' ? '#10B981' : '#EF4444',
-                        fontWeight: 700,
-                        fontSize: '0.95rem'
-                      }}>
-                        {transaction.type === 'income' ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={transaction.type}
-                          sx={{
-                            backgroundColor: transaction.type === 'income' ? '#D1FAE5' : '#FEE2E2',
-                            color: transaction.type === 'income' ? '#059669' : '#DC2626',
-                            fontWeight: 600,
-                            fontSize: '0.75rem',
-                            border: `1px solid ${transaction.type === 'income' ? '#A7F3D0' : '#FECACA'}`
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Box display="flex" gap={1}>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleEditClick(transaction)}
+                  filteredTransactions.slice(0, 8).map((transaction) => {
+                    const category = categories.find(c => c.id === transaction.category_id);
+                    return (
+                      <TableRow
+                        key={transaction.id}
+                        sx={{
+                          borderBottom: '1px solid #E2E8F0',
+                          '&:hover': {
+                            backgroundColor: '#F8FAFC'
+                          },
+                          transition: 'background-color 0.2s'
+                        }}
+                      >
+                        <TableCell sx={{ fontSize: '0.9rem', color: '#1E293B', fontWeight: 500 }}>{transaction.name}</TableCell>
+                        <TableCell sx={{ fontSize: '0.9rem', color: '#64748B' }}>{transaction.recipient || '-'}</TableCell>
+                        <TableCell sx={{ fontSize: '0.9rem', color: '#64748B' }}>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={category ? category.name : 'Uncategorized'}
                             sx={{
+                              backgroundColor: '#EFF6FF',
                               color: '#2563EB',
-                              padding: '4px',
-                              '&:hover': { backgroundColor: 'rgba(37, 99, 235, 0.08)' }
+                              fontWeight: 600,
+                              fontSize: '0.75rem',
+                              border: '1px solid #BFDBFE'
                             }}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => deleteTransaction(transaction.id)}
+                          />
+                        </TableCell>
+                        <TableCell sx={{
+                          color: transaction.type === 'income' ? '#10B981' : '#EF4444',
+                          fontWeight: 700,
+                          fontSize: '0.95rem'
+                        }}>
+                          {transaction.type === 'income' ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={transaction.type}
                             sx={{
-                              color: '#EF4444',
-                              padding: '4px',
-                              '&:hover': { backgroundColor: 'rgba(239, 68, 68, 0.08)' }
+                              backgroundColor: transaction.type === 'income' ? '#D1FAE5' : '#FEE2E2',
+                              color: transaction.type === 'income' ? '#059669' : '#DC2626',
+                              fontWeight: 600,
+                              fontSize: '0.75rem',
+                              border: `1px solid ${transaction.type === 'income' ? '#A7F3D0' : '#FECACA'}`
                             }}
-                          >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Box display="flex" gap={1}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleEditClick(transaction)}
+                              sx={{
+                                color: '#2563EB',
+                                padding: '4px',
+                                '&:hover': { backgroundColor: 'rgba(37, 99, 235, 0.08)' }
+                              }}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              onClick={() => deleteTransaction(transaction.id)}
+                              sx={{
+                                color: '#EF4444',
+                                padding: '4px',
+                                '&:hover': { backgroundColor: 'rgba(239, 68, 68, 0.08)' }
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} sx={{ textAlign: 'center', py: 4, color: '#64748B' }}>
+                    <TableCell colSpan={7} sx={{ textAlign: 'center', py: 4, color: '#64748B' }}>
                       No transactions yet. Add your first transaction to get started!
                     </TableCell>
                   </TableRow>

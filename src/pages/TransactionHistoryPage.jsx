@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Card, 
-  CardContent, 
-  Grid, 
-  Button, 
-  Select, 
-  MenuItem, 
-  FormControl, 
-  InputLabel, 
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
   Box,
   Paper,
   Table,
@@ -32,13 +32,13 @@ const TransactionHistoryPage = () => {
   const { transactions, categories, deleteTransaction, updateTransaction, calculateTotals } = useBudget();
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // Get initial state from navigation
   const initialState = location.state || {};
-  
+
   const [selectedPeriod, setSelectedPeriod] = useState(initialState.selectedPeriod || 'week');
   const [transactionType, setTransactionType] = useState(initialState.transactionType || 'all'); // 'all', 'income', 'expense'
-  
+
   // Update state if location state changes
   useEffect(() => {
     if (initialState.selectedPeriod) {
@@ -51,14 +51,14 @@ const TransactionHistoryPage = () => {
 
   // Filter transactions based on type and period
   const filteredTransactions = filterTransactionsByPeriod(
-    transactionType === 'all' 
-      ? transactions 
-      : transactions.filter(t => t.type === transactionType), 
+    transactionType === 'all'
+      ? transactions
+      : transactions.filter(t => t.type === transactionType),
     selectedPeriod
   );
 
   const totals = calculateTotals();
-  
+
   // Calculate totals for the filtered transactions
   const filteredTotals = {
     totalIncome: filteredTransactions
@@ -69,15 +69,15 @@ const TransactionHistoryPage = () => {
       .reduce((sum, t) => sum + t.amount, 0),
     remainingBalance: filteredTransactions
       .filter(t => t.type === 'income')
-      .reduce((sum, t) => sum + t.amount, 0) - 
+      .reduce((sum, t) => sum + t.amount, 0) -
       filteredTransactions
-      .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + t.amount, 0)
+        .filter(t => t.type === 'expense')
+        .reduce((sum, t) => sum + t.amount, 0)
   };
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ 
-      paddingLeft: { xs: 0, sm: 2 }, 
+    <Container maxWidth={false} disableGutters sx={{
+      paddingLeft: { xs: 0, sm: 2 },
       paddingRight: { xs: 0, sm: 2 },
       width: '100%',
       boxSizing: 'border-box'
@@ -102,7 +102,7 @@ const TransactionHistoryPage = () => {
             </Typography>
           </Box>
         </Box>
-        
+
         {/* Summary Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={4}>
@@ -262,6 +262,7 @@ const TransactionHistoryPage = () => {
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#EDE9FE' }}>
                   <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Name</TableCell>
+                  <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>For Whom</TableCell>
                   <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Date</TableCell>
                   <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Category</TableCell>
                   <TableCell sx={{ color: '#4B0082', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>Amount</TableCell>
@@ -270,77 +271,86 @@ const TransactionHistoryPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredTransactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>{transaction.name}</TableCell>
-                    <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>{transaction.date}</TableCell>
-                    <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
-                      <Chip 
-                        label={transaction.category} 
-                        sx={{ 
-                          backgroundColor: '#EDE9FE', 
-                          color: '#4B0082',
-                          fontWeight: 'bold',
-                          fontSize: '0.6rem',
-                          height: '20px',
-                          '& .MuiChip-label': {
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            pl: 0.5,
-                            pr: 0.5
-                          }
-                        }} 
-                      />
-                    </TableCell>
-                    <TableCell sx={{ 
-                      color: transaction.type === 'income' ? '#4CAF50' : '#F44336',
-                      fontWeight: 'bold',
-                      fontSize: { xs: '0.7rem', sm: '0.8rem' },
-                      px: { xs: 0.5, sm: 1 },
-                      py: { xs: 0.5, sm: 1 }
-                    }}>
-                      {transaction.type === 'income' ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
-                      <Chip 
-                        label={transaction.type} 
-                        sx={{ 
-                          backgroundColor: transaction.type === 'income' ? '#E8F5E9' : '#FFEBEE',
-                          color: transaction.type === 'income' ? '#2E7D32' : '#C62828',
-                          fontWeight: 'bold',
-                          fontSize: '0.6rem',
-                          height: '20px',
-                          '& .MuiChip-label': {
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            pl: 0.5,
-                            pr: 0.5
-                          }
-                        }} 
-                      />
-                    </TableCell>
-                    <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
-                      <Box display="flex" justifyContent="space-around">
-                        <IconButton 
-                          size="small" 
-                          sx={{ color: '#7E6BC7', padding: '4px', minWidth: '32px' }}
-                          onClick={() => console.log('Edit transaction:', transaction)}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton 
-                          size="small" 
-                          sx={{ color: '#D32F2F', padding: '4px', minWidth: '32px' }}
-                          onClick={() => deleteTransaction(transaction.id)}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {filteredTransactions.map((transaction) => {
+                  const category = categories.find(c => c.id === transaction.category_id);
+                  return (
+                    <TableRow key={transaction.id}>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>{transaction.name}</TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>{transaction.recipient || '-'}</TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
+                        <Chip
+                          label={category ? category.name : 'Uncategorized'}
+                          sx={{
+                            backgroundColor: '#EDE9FE',
+                            color: '#4B0082',
+                            fontWeight: 'bold',
+                            fontSize: '0.6rem',
+                            height: '20px',
+                            '& .MuiChip-label': {
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              pl: 0.5,
+                              pr: 0.5
+                            }
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell sx={{
+                        color: transaction.type === 'income' ? '#4CAF50' : '#F44336',
+                        fontWeight: 'bold',
+                        fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                        px: { xs: 0.5, sm: 1 },
+                        py: { xs: 0.5, sm: 1 }
+                      }}>
+                        {transaction.type === 'income' ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
+                        <Chip
+                          label={transaction.type}
+                          sx={{
+                            backgroundColor: transaction.type === 'income' ? '#E8F5E9' : '#FFEBEE',
+                            color: transaction.type === 'income' ? '#2E7D32' : '#C62828',
+                            fontWeight: 'bold',
+                            fontSize: '0.6rem',
+                            height: '20px',
+                            '& .MuiChip-label': {
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              pl: 0.5,
+                              pr: 0.5
+                            }
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, px: { xs: 0.5, sm: 1 }, py: { xs: 0.5, sm: 1 } }}>
+                        <Box display="flex" justifyContent="space-around">
+                          <IconButton
+                            size="small"
+                            sx={{ color: '#7E6BC7', padding: '4px', minWidth: '32px' }}
+                            onClick={() => {
+                              // Trigger edit via HomePage logic if needed, 
+                              // or we can add a local dialog here. 
+                              // For now, let's keep it consistent.
+                              console.log('Edit transaction:', transaction);
+                            }}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            sx={{ color: '#D32F2F', padding: '4px', minWidth: '32px' }}
+                            onClick={() => deleteTransaction(transaction.id)}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
